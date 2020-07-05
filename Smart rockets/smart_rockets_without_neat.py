@@ -1,10 +1,7 @@
 #JOGO NO ESTADO: JOGAVEL
 
 import pygame
-import neat
 import time
-import os
-import random
 import math
 
 WIN_WIDTH = 1200
@@ -25,19 +22,17 @@ class Ship:
 		self.angle = math.radians(0)
 		self.thrust = 0.006
 		self.gravidade = 0.1
-		#0.1
 		self.thrusting = False
 		self.keys = [False, False, False, False]
 		self.index = 1
 		self.img = ROCKET_IMGS[1]
 
 
-
 	def update(self):
 
 		#Thrust speed based on sin and cos
 		#
-		#if w is pressed
+		#if up is pressed
 		if self.keys[0]:
 			self.xSpeed += math.degrees(math.cos(self.angle)) * self.thrust
 			self.ySpeed += math.degrees(math.sin(self.angle)) * self.thrust
@@ -70,9 +65,6 @@ class Ship:
 		self.x += self.xSpeed * 0.8
 		self.y += self.ySpeed
 
-		print(math.degrees(self.angle))
-
-
 	def draw(self,win):
 
 		rotated_image = pygame.transform.rotate(self.img,-math.degrees(self.angle))
@@ -95,12 +87,6 @@ class Ship:
 
 		result3 = floor_mask.overlap(ship_mask,ship_offset)
 		result5 = ship_mask.overlap(floor_mask,floor_offset)
-
-
-		#debug
-		print(result3,result5)
-		#print([round(ship.x),round(ship.y)],floor_offset, result)
-
 
 		if self.index == 0:
 			self.img = ROCKET_IMGS[0]
@@ -134,21 +120,12 @@ class Floor:
 		result3 = floor_mask.overlap(ship_mask,ship_offset)
 		result5 = ship_mask.overlap(floor_mask,floor_offset)
 
-
-		#debug
-		print(result3,result5)
-		#print([round(ship.x),round(ship.y)],floor_offset, result)
-
-
 		if ship.index == 0:
 			ship.img = ROCKET_IMGS[0]
 		if result3 or result5:
 			return True
 
 		return False
-
-	
-
 
 	def draw(self,win):
 		win.blit(self.img,[self.x, self.y])
@@ -183,6 +160,7 @@ def main():
 				pygame.quit()
 				quit()
 
+			#This chunk of code makes me want to commit /quit_life
 			if event.type == pygame.KEYDOWN:
 				if event.key==pygame.K_UP:
 					ship.keys[0]=True
@@ -205,57 +183,6 @@ def main():
 
 		ship.collide(floor)
 		ship.update()
-		draw_window(win,ship,floor,BACKGROUND)
-
-		
+		draw_window(win,ship,floor,BACKGROUND)		
 
 main()
-
-
-def eval_genomes(genomes, config):
-
-	nets = []
-	ge = []
-	ships = []
-
-	#_, is used to ignore the first thingy that's created in "genomes" (useless,g)
-	#well, not useless, but not used here
-	for _, g in genomes:
-		#creates the bird, the neural network and the genome(ge)
-		net = neat.nn.FeedForwardNetwork.create(g, config)
-		nets.append(net)
-		birds.append(Bird(230,350))
-		g.fitness = 0
-		ge.append(g)
-
-
-
-#----------------------------------Neat Config---------------------------------------------------
-def run(config_path):
-	#picke pode ser usado para salvar
-
-	config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
-		neat.DefaultSpeciesSet, neat.DefaultStagnation,config_path)
-
-	#Generates Population using the config file set previously
-	p = neat.Population(config)
-
-	#Optional output in the console about the details of each generation
-	p.add_reporter(neat.StdOutReporter(True))
-	stats = neat.StatisticsReporter()
-	p.add_reporter(stats)
-
-
-	#50 is how many generations are going to be run
-	#
-	#p.run is a function that belongs to neat-python!
-	#(p is an object created by the neat function
-	#so when using "p.run" we are using a function
-	#that belongs to the neat lib)
-	#winner = p.run(eval_genomes,50)
-
-#This "if" calls the entire game
-if __name__ == "__main__":
-	local_dir = os.path.dirname(__file__)
-	config_path = os.path.join(local_dir, "config-feedforward.txt")
-	#run(config_path)
