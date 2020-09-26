@@ -39,7 +39,7 @@ class Ship:
 		if math.degrees(self.angle) <=180:
 			self.angle = math.radians(180)
 		else:
-			self.angle-= math.pi/20;
+			self.angle-= math.pi/20
 
 
 	def rotateRight(self):
@@ -47,7 +47,7 @@ class Ship:
 		if math.degrees(self.angle) >=360:
 			self.angle = math.radians(360)
 		else:
-			self.angle+= math.pi/20;
+			self.angle+= math.pi/20
 
 
 	def thrusting(self):
@@ -213,33 +213,32 @@ def eval_genomes(genomes,config):
 			So doing something if the output is > 0.5 is basically making the threshold of +75%
 			(which feels kinda high IMO)
 			"""
-			if output[0] > 0.5:
+			if output[0] > 0.6:
 				ship.thrusting()
-			if output[1] > 0.5 and output[1] > output[2]:
+			if output[1] > 0.6 and output[1] > output[2]:
 				ship.rotateLeft()
-			elif output[2] > 0.5:
+			elif output[2] > 0.6:
 				ship.rotateRight()
 		
 		#Fitness manipulation
 		for x,ship in enumerate(ships):
-
-			if math.degrees(ship.angle) >=267 and math.degrees(ship.angle) <=273:
-				ge[x].fitness+=.5
-
+			ge[x].fitness+= 10 - math.sqrt(abs(270-math.degrees(ship.angle)))
+			if ship.ySpeed > 0:
+				ge[x].fitness-=ship.ySpeed
 			if ship.x + ROCKET_IMGS[1].get_width() > WIN_WIDTH or ship.x < 0 or ship.y < 0:
-				ge[x].fitness -= 800
+				ge[x].fitness -= 8000
 				ships.pop(x)
 				nets.pop(x)
 				ge.pop(x)
 			elif ship.collide(floor):
 				if math.degrees(ship.angle) >=267 and math.degrees(ship.angle) <=273:
-					ge[x].fitness += 80
+					ge[x].fitness += 800
 				elif math.degrees(ship.angle) >=260 and math.degrees(ship.angle) <=280:
-					ge[x].fitness += 40
+					ge[x].fitness += 30
 				if abs(ship.xSpeed) < 1:
 					ge[x].fitness += 15
 				if ship.ySpeed < 1:
-					ge[x].fitness += 100
+					ge[x].fitness += 200
 				ships.pop(x)
 				nets.pop(x)
 				ge.pop(x)
@@ -311,7 +310,7 @@ def run(config_path):
 	#BLOCK 1
 	#"""
 	#'50' are how many generations are going to be run	
-	winner = p.run(eval_genomes,50)
+	winner = p.run(eval_genomes,150)
 	pickle_out = open("neatRockets.pickle","wb")
 	pickle.dump(winner,pickle_out)
 	pickle_out.close()
