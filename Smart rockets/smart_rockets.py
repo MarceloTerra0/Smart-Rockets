@@ -1,4 +1,3 @@
-#importing like this to make the code more readable
 import pygame
 import neat
 import time
@@ -6,7 +5,7 @@ import os
 import math
 import pickle
 
-#Uhh, I believe that these values can't be very dynamic, since the .pngs aren't being scaled to fit the resolution :p
+#I don't believe that these values can be very dynamic, since the .pngs aren't being scaled to fit the resolution
 WIN_WIDTH = 1200
 WIN_HEIGHT = 800
 
@@ -34,8 +33,9 @@ class Ship:
 
 
 	def rotateLeft(self):
-		#180 = min angle, could store this in a variable, but don't want to add a long int to
-		#each ship since it feels like a lot of memory usage that could be easily avoidable
+		#180 = min angle, could store this in a variable, but don't want to add an int to
+		#each ship since it feels like some memory usage that could be avoidable, in the cost
+		#of a code that's a bit less readable and more hard-coded (I'm not that happy about it, but whatever)
 		if math.degrees(self.angle) <=180:
 			self.angle = math.radians(180)
 		else:
@@ -165,7 +165,8 @@ def draw_window(win,ships,base,background):
 
 	pygame.display.update()
 
-#Main "game" function, closes and opens the pygame window, not IDEAL, so I'll doing it differently next time
+#Main "game" function, closes and opens the pygame window, so it's not IDEAL.
+#I'll do it differently next time
 def eval_genomes(genomes,config):
 	#Change 'genomes' to 'g' while displaying the winner
 	win = pygame.display.set_mode((WIN_WIDTH,WIN_HEIGHT))
@@ -211,7 +212,7 @@ def eval_genomes(genomes,config):
 			( --ship.y,ship.x[...]math.degrees(ship.angle)-- ) 
 			it feels inclined to do something or not, the output can vary from -1 to 1 (float).
 			So doing something if the output is > 0.5 is basically making the threshold of +75%
-			(which feels kinda high IMO)
+			(which feels kinda high IMO), but I'm still testing these numbers.
 			"""
 			if output[0] > 0.6:
 				ship.thrusting()
@@ -222,6 +223,7 @@ def eval_genomes(genomes,config):
 		
 		#Fitness manipulation
 		for x,ship in enumerate(ships):
+			#Huge thanks to @Patetico for helping me with this line
 			ge[x].fitness+= 10 - math.sqrt(abs(270-math.degrees(ship.angle)))
 			if ship.ySpeed > 0:
 				ge[x].fitness-=ship.ySpeed
@@ -261,7 +263,7 @@ def showBestGenome(genomes,config):
 	genomes.fitness = 0
 	ge.append(genomes)
 	while run:
-		clock.tick(90)
+		clock.tick(30)
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
