@@ -223,7 +223,7 @@ def eval_genomes(genomes,config):
 		
 		#Fitness manipulation
 		for x,ship in enumerate(ships):
-			#Huge thanks to @Patetico for helping me with this line
+			#Huge thanks to github.com/patetico for some neat *haha* ideas
 			ge[x].fitness+= 10 - math.sqrt(abs(270-math.degrees(ship.angle)))
 			if ship.ySpeed > 0:
 				ge[x].fitness-=ship.ySpeed
